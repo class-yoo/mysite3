@@ -3,6 +3,7 @@ package com.cafe24.config.app;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -24,9 +25,9 @@ public class DBConfig {
 //		<property name="username" value="webdb" />
 //		<property name="password" value="webdb" />
 //	</bean> 설정을 Xml이 아닌 java로 해줌
-
+	@Autowired
 	private Environment env;
-
+	
 	@Bean
 	public DataSource basicDataSource() {
 //		// <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -49,10 +50,11 @@ public class DBConfig {
 		basicDataSource.setPassword(env.getProperty("jdbc.password"));
 		basicDataSource.setInitialSize(10);
 		basicDataSource.setMaxActive(20);
-
+		
 		return basicDataSource;
 	}
-
+	
+	@Bean
 	public PlatformTransactionManager transactionManager(DataSource dataSource) {
 
 		return new DataSourceTransactionManager(dataSource);
