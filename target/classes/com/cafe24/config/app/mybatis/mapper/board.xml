@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<select id="getTotalBoardCount" resultType="long">
+	<![CDATA[
+		select count(*)
+		from board;
+	]]>
+	</select>
+	
+	<select id="getTotalSearchBoardCount" resultType="long" parameterType="string">
+	<![CDATA[
+		select count(*)
+		from board
+		where title like concat('%',#{keyword},'%')  or contents like concat('%',#{keyword},'%')
+	]]>
+	</select>
+	
+	<select id="getBoardList" resultType="boardvo" parameterType="map">
+	<![CDATA[
+		select a.no, a.title, a.contents, a.hit, date_format(a.reg_date, '%Y-%m-%d %h:%i:%s') as 'regDate', a.depth,
+								 b.no as 'userNo', b.name as 'userName'
+		from board a, user b
+		where a.user_no = b.no
+		order by a.group_no desc, a.order_no asc
+		limit #{startPageNum}, #{showBoardNum}
+		
+	]]>
+	</select>
+	
+	<select id="getSearchBoardList" resultType="boardvo" parameterType="map">
+	<![CDATA[
+		select a.no, a.title, a.contents, a.hit, date_format(a.reg_date, '%Y-%m-%d %h:%i:%s') as 'regDate', a.depth,
+								 b.no as 'userNo', b.name as 'userName'
+		from board a, user b
+		where a.user_no = b.no 
+		and (a.title like '%${keyword}%'
+		or a.contents like '%${keyword}%')
+		order by a.group_no desc, a.order_no asc
+		limit ${startPageNum}, ${showBoardNum}
+		
+	]]>
+	</select>
+
+	<select id="getBoardByNo" resultType="boardvo"
+		parameterType="long">
+	<![CDATA[
+		select no, title, contents, group_no as 'groupNo',
+		order_no as 'orderNo', depth, user_no as 'userNo'
+		from board
+		where no = #{no}
+	]]>
+	</select>
+
+	<!-- 가장최근 그룹번호를 가져와서 +1하여 6번째 컬럼에 넣고, -->
+	<insert id="insertBoard" parameterType="boardvo">
+		<![CDATA[
+		insert 
+		into board
+		values (null , #{title}, #{contents}, 0, now(), 
+		(select ifnull ((select max(group_no) from board as b)+1, 1)), 1 , 0, 0, #{userNo})
+		]]>
+	</insert>
+	
+	<insert id="insertReplyBoard" parameterType="boardvo">
+		<![CDATA[
+		insert 
+		into board
+		values (null , #{title}, #{contents}, 0, now(), #{groupNo},  #{orderNo}+1 , #{depth}+1, #{parentNo}, #{userNo})
+		]]>
+	</insert>
+	
+	<insert id="insertParentNoAndSubNo" parameterType="boardvo">
+		<![CDATA[
+		insert 
+		into reply
+		values (#{parentNo}, #{no})
+		]]>
+	</insert>
+
+	<update id="increaseOrderNo" parameterType="boardvo">
+		<![CDATA[
+			update board
+			set order_no = order_no+1 
+			where group_no = #{groupNo} and order_no > #{orderNo}
+		]]>
+	</update>
+
+	<update id="updateBoard" parameterType="boardvo">
+		<![CDATA[
+			update board
+			set title = #{title} , contents = #{contents} 
+			where no= #{no}
+		]]>
+	</update>
+
+	<delete id="deleteBoard" parameterType="long">
+		<![CDATA[
+			delete 
+			from board
+			where parent_no = #{boardNo} or no = #{boardNo};
+		]]>
+	</delete>
+
+</mapper>

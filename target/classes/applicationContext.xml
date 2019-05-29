@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	
+	<!-- 이클립스 로컬을 개발할 때는 이 설정파일을선택하면 된다. -->
+	
+	<!-- 이 코드는 .xml 파일에 설정을 하는 대신에 어노테이션으로 설정을 하겠다는 의미 -->
+	<context:annotation-config />
+	
+	<!-- 어노테이션을 스캔 할 범위인 base-package를 정의 -->
+	<!-- 즉 base-package 범위 내에서 @Repository , @Service , @Component 어노테이션을 스캔하겠다는 의미 -->
+	<!-- service와 repository 범위를 한번에 묶는 패키지를 base로 하면 범위가 커지기 때문에 두개로 설정	 -->
+	
+	<!-- 3. base-package이 범위내에 있는 @Repository, @Service, @Component 어노테이션이 설정되어 있는 클래스들을 -->
+	<!--  객체생성하여  Root Application Context에 저장함  >>>>> 여기까지가 Tomcat을 실행 했을때 과정-->
+	<context:component-scan base-package="com.cafe24.mysite.repository, com.cafe24.mysite.service, com.cafe24.mysite.aspect">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Component" />			
+	</context:component-scan>
+	
+</beans>
