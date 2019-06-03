@@ -1,5 +1,7 @@
 package com.cafe24.mysite.controller;
 
+import java.time.chrono.MinguoEra;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -59,6 +61,16 @@ public class UserController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login() {
 		return "user/login";
+	}
+	
+	@RequestMapping(value="/auth", method=RequestMethod.POST)
+	public void auth() {
+		
+	}
+	
+	@RequestMapping(value="/logout", method=RequestMethod.POST)
+	public void logout() {
+		
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
