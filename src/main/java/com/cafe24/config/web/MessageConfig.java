@@ -1,4 +1,4 @@
-package com.cafe24.mysite.config;
+package com.cafe24.config.web;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

@@ -19,7 +19,6 @@ public class AuthLoginInterceptor extends HandlerInterceptorAdapter {
 		
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-		
 		ApplicationContext ac = 
 				WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
 		

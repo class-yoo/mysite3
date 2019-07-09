@@ -21,10 +21,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 
-
 @Configuration
 @EnableWebMvc
-public class MVCConfig extends WebMvcConfigurerAdapter {
+public class TestMVCConfig extends WebMvcConfigurerAdapter{
 	//
 	// View Resolver
 	//
@@ -43,7 +42,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
 	//
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		configurer.enable();
+//		configurer.enable();
 	}
 
 	//
