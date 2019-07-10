@@ -8,17 +8,25 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cafe24.mysite.dto.JSONResult;
 import com.cafe24.mysite.service.UserService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 @RestController("userAPIController")
 @RequestMapping("/api/user")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
-	
-	//@ResponseBody
-	@RequestMapping(value= "/checkemail", method= RequestMethod.POST)
-	public JSONResult checkEmail(@RequestParam(value="email", required=true, defaultValue="") String email) {
+
+	// @ResponseBody
+
+	@ApiOperation(value = "이메일 존재 여부")
+	@ApiImplicitParams({@ApiImplicitParam(value="email", required=true, defaultValue="")})
+	@RequestMapping(value = "/checkemail", method = RequestMethod.GET)
+	public JSONResult checkEmail(@RequestParam(value = "email", required = true, defaultValue = "") String email) {
 		Boolean exist = userService.existEmail(email);
+		System.out.println(email);
 		return JSONResult.success(exist);
 	}
 }
