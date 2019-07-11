@@ -3,10 +3,19 @@ package com.cafe24.mysite.controller.api;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
 
 import org.mockito.Mockito;
 import org.junit.Before;
@@ -54,9 +63,9 @@ public class GuestBookContollerTest {
 	public void testFetchGuestbookList() throws Exception {
 		// url로 찌를때 mockMvc를 사용한다.
 		// VIEW 없이도 웹 개발을 할 수 있는 방식
-		ResultActions resultActions = 
-				mockMvc.perform(get("/api/guestbook/list/{no}", 1L).contentType(MediaType.APPLICATION_JSON));
-		
+		ResultActions resultActions = mockMvc
+				.perform(get("/api/guestbook/list/{no}", 1L).contentType(MediaType.APPLICATION_JSON));
+
 		resultActions.andExpect(status().isOk()).andDo(print())
 		.andExpect(jsonPath("$.result", is("success")))
 		.andExpect(jsonPath("$.data", hasSize(2)))
@@ -69,23 +78,38 @@ public class GuestBookContollerTest {
 //		 andDo 메소드는 응답내용을 확인하는 메소드
 	}
 	
+	
 	@Test
 	public void testInsertGuestbook() throws Exception {
-		
-		GuestbookVo voMock = Mockito.mock(GuestbookVo.class);
-		voMock.setName("user1");
-		voMock.setContents("test1");
-		
-		
+
+		GuestbookVo vo = new GuestbookVo();
+		vo.setName("user1");
+		vo.setContents("test1");
+
 //		Mockito.when(voMock.getNo2()).thenReturn("10L");
 //		Long no = (Long)voMock.getNo2();
 //		Mockito.when(mailSenderMock.sendMail()).thenReturn(true);
 //		boolean isSuccess = mailSenderMock.sendMail(""); 
-		
-		ResultActions resultActions = 
-				mockMvc.perform(get("/api/guestbook/add")
-						.contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(voMock)));
-		
-		resultActions.andExpect(status().isOk()).andDo(print());
+
+		ResultActions resultActions = mockMvc.perform(
+				post("/api/guestbook/add").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(vo)));
+
+		resultActions.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.result", is("success")))
+				.andExpect(jsonPath("$.data.name", is(vo.getName())))
+				.andExpect(jsonPath("$.data.contents", is(vo.getContents())));
+	}
+
+	@Test
+	public void testDeleteGuestbook() throws Exception {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("no", 3L);
+		map.put("password", "1234");
+
+		ResultActions resultActions = mockMvc.perform(
+				delete("/api/guestbook/delete").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(map)));
+
+		resultActions.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.result", is("success")))
+				.andExpect(jsonPath("$.data", is((int)map.get("no"))));
 	}
 }

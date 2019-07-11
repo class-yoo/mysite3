@@ -7,27 +7,28 @@ import org.springframework.stereotype.Repository;
 
 import com.cafe24.mysite.vo.GuestbookVo;
 
-
 @Repository
 public class GuestbookDao {
-	
+
 	@Autowired
 	private SqlSession sqlSession;
-	
-	
+
 	public Boolean deleteGuestbook(GuestbookVo guestbookVo) {
-		
 		return 1 == sqlSession.delete("guestbook.delete", guestbookVo);
 	}
-
+	
 	public Boolean insertGuestbook(GuestbookVo guestbookVo) {
-
 		return 1 == sqlSession.insert("guestbook.insert", guestbookVo);
-		
 	}
 
 	public List<GuestbookVo> getList() {
 		return sqlSession.selectList("guestbook.getList");
 	}
-	
+
+	public List<GuestbookVo> getList(Long lastNo) {
+		
+		List<GuestbookVo> result = sqlSession.selectList("guestbook.getList2", lastNo);
+		return result;
+	}
+
 }

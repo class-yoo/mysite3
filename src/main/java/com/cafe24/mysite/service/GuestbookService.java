@@ -18,7 +18,6 @@ public class GuestbookService {
 	
 	public List<GuestbookVo> getGuestbookList() {
 		
-		
 		return guestbookDao.getList();
 	}
 	
@@ -31,4 +30,5 @@ public class GuestbookService {
 
 		return guestbookDao.deleteGuestbook(guestbookVo);
 	}
+
 }

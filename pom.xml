@@ -156,7 +156,8 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-
+		
+		<!-- spring-test--> 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -171,6 +172,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- hamcrest-all -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
