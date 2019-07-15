@@ -1,8 +1,13 @@
 package com.cafe24.mysite.vo;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.cafe24.mysite.validator.constraint.ValidGender;
 
 public class UserVo {
 	
@@ -17,8 +22,13 @@ public class UserVo {
 	@NotEmpty
 	private String email;
 	
+	@Pattern(regexp="(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}", message="비밀번호는 8자 이상 20자 이하의 알파벳, 숫자, 특수문자를 조합하여 작성해야 합니다.") 
+	@Length(min=8, max=20, message="비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
 	private String password;
+	
+	@ValidGender
 	private String gender;
+	
 	private String joinDate;
 
 	public UserVo() {}

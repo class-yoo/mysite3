@@ -8,7 +8,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 @Configuration
 public class MessageConfig {
 	
-	
 //	<bean id="messageSource"
 //			class="org.springframework.context.support.ResourceBundleMessageSource">
 //			<property name="basenames">

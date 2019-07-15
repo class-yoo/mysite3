@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath }/assets/css/guestbook-spa.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style type="text/css">
-
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset{
 	float: none;
 	text-align:center
@@ -40,69 +39,86 @@
 }
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/jquery/jquery-1.9.0.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/ejs/ejs.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-
-var isEnd = false;
-var startPage = 1;
-var render = function (vo, mode) {
-	// 실제로는 template library 사용한다.
-	// -> ejs, underscore, mustache
-	var html =
-		"<li data-no=''>"+
-		"<strong>"+ vo.name + "</strong>"+
-		"<p>"+ vo.contents.replace(/\n/gi,"<br>")+"</p>"+
-		"<strong></strong>" +
-		"<a href='#' data-no='" + vo.no + "'>삭제</a>" + 
-		"</li>";
-	
-	if(mode){
-		$("#list-guestbook").prepend(html); // 앞에다 붙이는 방식
-	}else {
-		$("#list-guestbook").append(html);	
+var emptyFunction = function(){};
+// jQuery PlugIn
+(function($){
+	$.fn.flash = function(){
+		$(this).click(function(){
+			var isBlink = false;
+			var $that = $(this);
+			setInterval(function(){
+				$that.css("backgroundColor", isBlink ? "#f00" : "#aaa");
+				isBlink = !isBlink;
+			}, 1000);
+		})
 	}
-	
-}
-
-var fetchList = function () {
-	if(isEnd){
-		return;
-	}
-	var lastNo = $("#list-guestbook li").last().data("no") || 0;
-	
-	$.ajax({
-		url:"${pageContext.request.contextPath}/api/guestbook/list/"+ lastNo ,
-		type: "get",
-		//contentType: "application/json" //post 방식으로 json Type으로 보낼때
-		dataType: "json", // 받을때 원하는 데이터 타입
-		data: "",
-		success: function(response){
-			if(response.result!="success"){
-				console.error(response.message);
-				return;
+})(jQuery);
+///////////////////////////////
+var messageBox = function( title, message, callback ) {
+	$("#dialog-message").attr('title', title);
+	$("#dialog-message p").text(message)
+	$("#dialog-message").dialog({
+		modal: true,
+		buttons: {
+			"확인": function(){
+				$(this).dialog('close');
 			}
-			
-			// isEnd 검증
-			
-			//detect end
-			if(response.data.length == 0){
-				isEnd=true;
-				$("#btn-next").prop("disabled", true);
-				return;
-			}
-			
-			//rendering
-			$.each(response.data, function (index, vo) {
-				render(vo);
-			});
-			},
-		error: function (jqXHR, status, e) {
-			console.log(status + ":" + e); 
+		},
+		close: function(){
+			//....
+			//....
+			//....
+			(callback || emptyFunction)();
 		}
 	});
 }
-
-$(function (){ 
+// import ejs template
+var listItemTemplate = new EJS({
+	url: '${pageContext.request.contextPath }/assets/js/ejs-templates/guestbook-list-item.ejs'
+});
+var listTemplate = new EJS({
+	url: '${pageContext.request.contextPath }/assets/js/ejs-templates/guestbook-list.ejs'
+});
+var isEnd = false;
+var fetchList = function(){
+	if(isEnd){
+		return;
+	}
+	
+	var lastNo = $('#list-guestbook li').last().data('no') || 0;
+	$.ajax({
+		url: "${pageContext.request.contextPath }/api/guestbook/list/" + lastNo,
+		type: "get",
+		//contentType: "application/json" //post 방식으로  JSON Type으로 데이터를 보낼 때
+		dataType: "json",
+		data: "",
+		success: function(response){
+			if(response.result != "success"){
+				console.error(reponse.message);
+				return;
+			}
+			
+			// detect end
+			if(response.data.length == 0){
+				isEnd = true;
+				$("#btn-next").prop("disabled", true);
+				return;
+			}					
+			
+			// rendering
+			var html = listTemplate.render(response);
+			$("#list-guestbook").append(html);
+		},
+		error: function(jqXHR, status, e){
+			console.error(status + ":" + e);
+		}
+	});
+}
+$(function(){
+	
 	var dialogDelete = $( "#dialog-delete-form" ).dialog({
 		autoOpen: false,
         height: 170,
@@ -116,17 +132,17 @@ $(function (){
 				}
 				
 				$.ajax({
-					url: "${pageContext.request.contextPath }/api/guestbook/delete",
+					url: "${pageContext.request.contextPath }/api/guestbook",
 					type: "delete",
-					contentType: "application/json", //post 방식으로  JSON Type으로 데이터를 보낼 때
+					//contentType: "application/json", //post 방식으로  JSON Type으로 데이터를 보낼 때
 					dataType: "json",
-					data: JSON.stringify(vo),
+					data: "passwodord=" + $("#password-delete").val(),
 					success: function(response){
 						if(response.result != "success"){
 							console.error(response.message);
 							return;
 						}
-						alert(response.data);
+						
 						//li 엘리멘트 삭제
 						$("#list-guestbook li[data-no='" + response.data + "']").remove();
 						dialogDelete.dialog('close');
@@ -146,73 +162,71 @@ $(function (){
         }
 	});	
 	
-	$("#btn-next").click(function () {
-		fetchList();
-	});
-	
-	$(window).scroll(function () {
+	$(window).scroll(function(){
 		var $window = $(this);
 		var scrollTop = $window.scrollTop();
 		var windowHeight = $window.height();
 		var documentHeight = $(document).height();
-		
-		if(scrollTop + windowHeight> documentHeight){
+		if( scrollTop + windowHeight + 10 > documentHeight ){
 			fetchList();
 		}
-		
 	});
 	
-	$('#add-form').submit(function (event) {
-		
-		// submit event 기본 동작막기
+	$("#add-form").submit(function(event){
+		// submit event 기본 동작을 막음
 		// posting을 막음
 		event.preventDefault();
 		
-		var vo= {};
+		var vo = {};
 		
-		//validation (client side, UX, JQuery Validation Plugin)
-		// 생략
-		
+		// validation (clinet side, UX, jQuery Validation Plug-in)
 		vo.name = $("#input-name").val();
+		if(vo.name == ''){
+			messageBox('글남기기', '이름은 필수 입력 항목입니다.', function(){
+				$('#input-name').focus();
+			});
+			return;
+		}		
 		vo.password = $("#input-password").val();
+		if(vo.password == ''){
+			messageBox('글남기기', '비밀번호는 필수 입력 항목입니다.', function(){
+				$('#input-password').focus();
+			});
+			return;
+		}		
 		vo.contents = $("#tx-content").val();
+		if(vo.contents == ''){
+			messageBox('글남기기', '내용은 필수 입력 항목입니다.');
+			return;
+		}		
 		
-		console.log($.param(vo)); // get 방식일때 객체 안의 데이터 형식 완성시켜줌
-		console.log(JSON.stringify(vo));
+		//console.log( $.param(vo) );
+		//console.log( JSON.stringify(vo) );
 		
 		$.ajax({
-			url:"${pageContext.request.contextPath}/api/guestbook/add",
+			url: "${pageContext.request.contextPath }/api/guestbook/add",
 			type: "post",
-			contentType: "application/json", //post 방식으로 json Type으로 보낼때
-			dataType: "json", // 받을때 원하는 데이터 타입
+			contentType: "application/json", //post 방식으로  JSON Type으로 데이터를 보낼 때
+			dataType: "json",
 			data: JSON.stringify(vo),
 			success: function(response){
-				if(response.result!="success"){
-					console.error(response.message);
+				if(response.result != "success"){
+					console.error(reponse.message);
 					return;
 				}
 				
 				//rendering
-				render(response.data, true);
+				var html = listItemTemplate.render(response.data);
+				$("#list-guestbook").prepend(html);
 				
-				//reset form
-				$("#add-form")[0].reset(); // html element를 가져와서 reset() 함수 호출
+				// reset form
+				$("#add-form")[0].reset();
 			},
-			error: function (jqXHR, status, e) {
-				console.log(status + ":" + e); 
-				return;
+			error: function(jqXHR, status, e){
+				console.error(status + ":" + e);
 			}
 		});
-		
-	});
-	
-	
-	// Live Event => 방식
-	$("#geustbook ul li a").click(function (event) {
-		// event.preventDefault();
-		
-	});
-	
+	})
 	
 	// Live Event => delegation(위임) 방식
 	$(document).on('click', '#guestbook ul li a', function(event){
@@ -223,8 +237,10 @@ $(function (){
 	
 	// 최초 리스트 가져오기
 	fetchList();
+	
+	// jquery plugin test
+	$("#btn-next").flash();
 });
-
 </script>
 </head>
 <body>
@@ -233,15 +249,15 @@ $(function (){
 		<div id="content">
 			<div id="guestbook">
 				<h1>방명록</h1>
+				<button id="btn-next">flash jquery plug-in</button>
+				<br/>
 				<form id="add-form" action="" method="post">
 					<input type="text" id="input-name" placeholder="이름">
 					<input type="password" id="input-password" placeholder="비밀번호">
 					<textarea id="tx-content" placeholder="내용을 입력해 주세요."></textarea>
 					<input type="submit" value="보내기" />
 				</form>
-				<ul id="list-guestbook">
-
-				</ul>
+				<ul id="list-guestbook"></ul>
 			</div>
 			<div id="dialog-delete-form" title="메세지 삭제" style="display:none">
   				<p class="validateTips normal">작성시 입력했던 비밀번호를 입력하세요.</p>
@@ -252,7 +268,6 @@ $(function (){
 					<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
   				</form>
 			</div>
-			<button id="btn-next">Next Page</button>
 			<div id="dialog-message" title="" style="display:none">
   				<p></p>
 			</div>						
