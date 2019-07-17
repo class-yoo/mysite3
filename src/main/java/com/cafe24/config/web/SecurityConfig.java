@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import com.cafe24.mysite.security.AuthInterceptor;
@@ -12,8 +13,9 @@ import com.cafe24.mysite.security.AuthLoginInterceptor;
 import com.cafe24.mysite.security.AuthLogoutInterceptor;
 import com.cafe24.mysite.security.AuthUserHandlerMethodArgumentResolver;
 
-
-@Configuration
+// Spring Security로 대체
+//@Configuration
+//@EnableWebMvc
 public class SecurityConfig extends WebMvcConfigurerAdapter {
 	//
 	//	Argument Resolver

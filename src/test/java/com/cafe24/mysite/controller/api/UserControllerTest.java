@@ -42,26 +42,25 @@ public class UserControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
-	@Ignore
 	@Test
 	public void testUserJoin() throws Exception {
 		
 		UserVo userVo = new UserVo();
 		
-//		//1. Normal User's Join Data
-//		userVo.setName("홍길동");
-//		userVo.setEmail("hgd888@naver.com");
-//		userVo.setPassword("12345678!");
-//		userVo.setGender("M");
-//		
-//		ResultActions resultActions = mockMvc
-//				.perform(post("/api/user/join")
-//						.contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(userVo)));
-//		
-//		resultActions
-//		.andExpect(status().isBadRequest())
-//		.andDo(print())
-//		.andExpect(jsonPath("$.result",is("fail")));
+		//1. Normal User's Join Data
+		userVo.setName("홍길동");
+		userVo.setEmail("hgd888@naver.com");
+		userVo.setPassword("12345678!");
+		userVo.setGender("M");
+		
+		ResultActions resultActions = mockMvc
+				.perform(post("/api/user/join")
+						.contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(userVo)));
+		
+		resultActions
+		.andExpect(status().isBadRequest())
+		.andDo(print())
+		.andExpect(jsonPath("$.result",is("fail")));
 		
 		//2. Invalidation in Name : 
 		userVo.setName("홍");
