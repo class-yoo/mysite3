@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cafe24.mysite.security.SecurityUser;
 import com.cafe24.mysite.service.UserService;
 import com.cafe24.mysite.vo.UserVo;
+import com.cafe24.security.AuthUser;
 
 @Controller
 @RequestMapping("/user")
@@ -63,34 +66,16 @@ public class UserController {
 		return "user/login";
 	}
 	
-	@RequestMapping(value="/auth", method=RequestMethod.POST)
-	public void auth() {
-		
-	}
+//	@RequestMapping(value="/auth", method=RequestMethod.POST)
+//	public void auth() {
+//		
+//	}
+//	
+//	@RequestMapping(value="/logout", method=RequestMethod.POST)
+//	public void logout() {
+//		
+//	}
 	
-	@RequestMapping(value="/logout", method=RequestMethod.POST)
-	public void logout() {
-		
-	}
-	
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(@RequestParam(value = "email", required = true, defaultValue = "") String email,
-			@RequestParam(value = "password", required = true, defaultValue = "") String password, HttpSession session,
-			Model model) {
-		
-		UserVo authUser = userService.getUser(new UserVo(email, password));
-
-		if (authUser == null) {
-			model.addAttribute("result", "fail");
-			return "user/login";
-		}
-
-		// session 처리
-		session.setAttribute("authUser", authUser);
-
-		return "redirect:/";
-	}
-
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpSession session) {
 
@@ -102,9 +87,11 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/update")
-	public String update(Model model, HttpSession session) {
-
-		UserVo userVo = userService.getUser(((UserVo) session.getAttribute("authUser")).getNo());
+	public String update( @AuthUser SecurityUser securityUser, Model model) {
+		
+		System.out.println("securityUser=" + securityUser);
+		
+		UserVo userVo = userService.getUser(securityUser.getNo());
 		
 		model.addAttribute("name", userVo.getName());
 		model.addAttribute("email", userVo.getEmail());

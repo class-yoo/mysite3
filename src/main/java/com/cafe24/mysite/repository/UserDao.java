@@ -5,7 +5,6 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StopWatch;
 
 import com.cafe24.mysite.vo.UserVo;
 
@@ -26,6 +25,7 @@ public class UserDao {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("email", email);
 		map.put("password", password);
+		
 		UserVo userVo = sqlSession.selectOne("user.getByEmailAndPassword", map);
 		
 		return userVo;
@@ -33,12 +33,13 @@ public class UserDao {
 	
 	public UserVo get(String email) {
 
-		StopWatch sw = new StopWatch();
-		sw.start();
-		UserVo userVo = sqlSession.selectOne("user.getByEmail", email);
-		sw.stop();
+//		StopWatch sw = new StopWatch();
+//		sw.start();
+//		UserVo userVo = sqlSession.selectOne("user.getByEmail", email);
+//		sw.stop();
+//		System.out.println(sw.getTotalTimeMillis());
 		
-		System.out.println(sw.getTotalTimeMillis());
+		UserVo userVo = sqlSession.selectOne("user.getByEmail", email);
 		
 		return userVo;
 	}

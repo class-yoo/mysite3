@@ -29,6 +29,7 @@ public class UserVo {
 	@ValidGender
 	private String gender;
 	
+	private String role = "ROLE_USER";
 	private String joinDate;
 
 	public UserVo() {}
@@ -61,6 +62,16 @@ public class UserVo {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getPassword() {

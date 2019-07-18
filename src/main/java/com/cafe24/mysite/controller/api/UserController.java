@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController("userAPIController")
 @RequestMapping("/api/user")
 public class UserController {
-
+	
 	@Autowired
 	private MessageSource messageSource;
 	
@@ -66,6 +66,7 @@ public class UserController {
 	
 	@PostMapping(value = "/login")
 	public ResponseEntity<JSONResult> login(@RequestBody UserVo userVo) {
+		System.out.println("userVo="+ userVo);
 		// 파라미터에 @Valid를 명시해주지 않고 유효성검사를 동적으로 생성해줘서 적용한다.
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 		

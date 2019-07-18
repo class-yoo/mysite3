@@ -1,4 +1,4 @@
-package com.cafe24.mysite.security;
+package com.cafe24.security;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.CLASS;

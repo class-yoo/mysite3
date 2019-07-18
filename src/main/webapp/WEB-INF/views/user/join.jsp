@@ -97,8 +97,8 @@ $(function(){
 					
 					<fieldset>
 						<legend>성별</legend>
-						<label>여</label> <form:radiobutton path="gender" value="female" checked="checked"/>
-						<label>남</label> <form:radiobutton path="gender" value="male"/>
+						<label>여</label> <form:radiobutton path="gender" value="female" checked="checked" />
+						<label>남</label> <form:radiobutton path="gender" value="male" />
 					</fieldset>
 					
 					<fieldset>
