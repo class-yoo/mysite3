@@ -26,7 +26,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 	 5. UsernamePasswordAuthenticationFilter	( auto-config default 	, V)
 	 6. DefaultLoginPageGeneratingFilter		( auto-config default )
 	 7. CasAuthenticationFilter
-	 8. BasicAuthenticationFilter				( auto-config default 	, V )
+	 8. BasicAuthenticationFilter				( auto-config default )
 	 9. RequestCacheAwareFilter					( auto-config default )
 	10. SecurityContextHolderAwareRequestFilter	( aut	o-config default )
 	11. JaasApiIntegrationFilter
@@ -38,7 +38,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -90,7 +90,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		.antMatchers("/**").permitAll()
 		.anyRequest().permitAll()
 //		 하나씩 순차적으로 인증된다.
-		
 		
 		// Temporary for Testing
 //		http.csrf().disable();
