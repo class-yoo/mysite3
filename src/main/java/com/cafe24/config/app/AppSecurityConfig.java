@@ -71,7 +71,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	*/
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-//		super.configure(http); ->> 부모클래스가 URL를 차단하고있다.
+		super.configure(http); //->> 부모클래스가 URL를 차단하고있다.
 		
 		// 1. ACL 설정
 		
@@ -112,6 +112,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		.logout()
 		.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")) // 어디로 가야 로그아웃 요청인가 ?
 		.logoutSuccessUrl("/") // 로그아웃 성공시 요청할 URL
+		.deleteCookies("JSESSIONID")
 		.invalidateHttpSession(true)
 		
 		
